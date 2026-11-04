@@ -1,0 +1,13 @@
+**Dans le template index.html, ajouter l'affichage de la date de publication du sondage.**
+
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a> - {{ question.pub_date }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+
