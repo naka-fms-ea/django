@@ -46,6 +46,3 @@ urlpatterns = [
     path("all/", views.AllView.as_view(), name="all"),
 ]
 
-
-**3. Dans cette même page http://127.0.0.1:8000/polls/all/, modifier le lien porté par chaque question pour aboutir à une page du type http://127.0.0.1:8000/polls/1/frequency/ affichant les résultats du sondage en valeur absolue et en pourcentage plutôt que le formulaire de vote.**
-
