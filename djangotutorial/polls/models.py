@@ -5,6 +5,8 @@ from django.utils import timezone
 
 from django.db.models import Sum
 
+from django.contrib import admin
+
 MAX_LENGTH = 20
 
 
@@ -52,6 +54,15 @@ class Question(models.Model):
             if c.votes > max_choice.votes:
                 max_choice = c
         return (max_choice.choice_text, max_choice.votes / total)
+
+    @admin.display(
+        boolean=True,
+        ordering="pub_date",
+        description="Published recently?",
+    )
+    def was_published_recently(self):
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
 
 class Choice(models.Model):
