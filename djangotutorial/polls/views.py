@@ -2,13 +2,23 @@ from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
-#from django.shortcuts import render
+#from django.shortcuts import render, redirect
 #from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
+#from .forms import NameForm
+#from .forms import ChoixForm
+from django.core.mail import send_mail
+from django.utils import timezone
 
 from .models import Choice, Question
+
+from .forms import QuestionAddForm
+
+
+NB_MAX_CHOIX = 5
+
 
 # Create your views here.
 
@@ -96,3 +106,100 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
+
+class AllView(generic.ListView):
+    template_name = "polls/all.html"
+    context_object_name = "latest_question_list"
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by("-pub_date")
+
+
+class FrequencyView(generic.DetailView):
+    model = Question
+    template_name = "polls/frequency.html"
+
+
+# def get_name(request):
+#     # if this is a POST request we need to process the form data
+#     if request.method == "POST":
+#         # create a form instance and populate it with data from the request:
+#         form = NameForm(request.POST)
+#         # check whether it's valid:
+#         if form.is_valid():
+#             # process the data in form.cleaned_data as required
+#             # ...
+#             # redirect to a new URL:
+#             return HttpResponseRedirect("/thanks/")
+#
+#     # if a GET (or any other method) we'll create a blank form
+#     else:
+#         form = NameForm()
+#
+#     return render(request, "name.html", {"form": form})
+
+
+# fusion et modification des méthodes add et confirm_add # en la seule méthode add
+def add(request):
+    if request.method == 'POST':
+        form = QuestionAddForm(request.POST)
+        if form.is_valid():
+            question = \
+                Question(question_text= form.cleaned_data['question_text'], pub_date=timezone.now())
+            question.save()
+            # on traite à présent les champs de choix remplis
+            # (on s'arrête au premier vide)
+            for no_choix in range(NB_MAX_CHOIX):
+                nom_champ = 'choice_{}'.format(no_choix)
+                choice_text = form.cleaned_data[nom_champ].strip()
+                if choice_text:
+                    choice = Choice(question=question, choice_text=choice_text)
+                    choice.save()
+                else:
+                    break
+            return render(request, 'polls/confirm_add.html')
+    else:
+        form = QuestionAddForm()
+    return render(request, 'polls/add.html', {'form': form})
+
+
+#def formulaire_choix(request):
+#    if request.method == "POST":
+
+#        form = ChoixForm(request.POST)
+
+#       if form.is_valid():
+#            choix = form.cleaned_data["choix_utilisateur"]
+
+            # Traitement du choix sélectionné
+#           print("Choix sélectionné :", choix)
+
+#            return render(
+#                request,
+#                "resultat.html",
+#                {"choix": choix}
+#            )
+
+#    else:
+#       form = ChoixForm()
+
+#    return render(
+#        request,
+#        "formulaire.html",
+#        {"form": form}
+#    )
+
+#if form.is_valid():
+#    subject = form.cleaned_data["subject"]
+#    message = form.cleaned_data["message"]
+#    sender = form.cleaned_data["sender"]
+#    cc_myself = form.cleaned_data["cc_myself"]
+#
+#    recipients = ["info@example.com"]
+#    if cc_myself:
+#        recipients.append(sender)
+#
+#    send_mail(subject, message, sender, recipients)
+#    return HttpResponseRedirect("/thanks/")
