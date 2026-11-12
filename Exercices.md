@@ -46,3 +46,31 @@ urlpatterns = [
     path("all/", views.AllView.as_view(), name="all"),
 ]
 
+
+**5.4 Exercice sur l'héritage de gabarits**
+
+base.html :
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+    <title>{% block title %}Title{% endblock %}</title>
+</head>
+<body>
+
+<header class="site-header">
+    {% block header %}
+    <img src="images/bandeau.jpg" alt="Bandeau du site">
+    {% endblock %}
+</header>
+
+<main>
+    {% block main %}
+
+    {% endblock %}
+</main>
+
+</body>
+</html>
