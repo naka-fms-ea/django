@@ -1,0 +1,16 @@
+{% extends "polls/base.html" %}
+{% block titre %}
+connexion
+
+{% endblock %}
+
+{% block sondages %}
+<form method="post">
+{% csrf_token %}
+
+{{ form.as_table }}
+    <button type="submit">se connecter</button>
+</form>
+
+
+{% endblock %}
