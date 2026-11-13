@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>
+        {% block titre %}
+apprendre à utiliser django
+{% endblock %}
+
+</title>
+{% load static %}
+<link rel="stylesheet" href="/static/polls/style.css">
+</head>
+
+<body>
+
+
+<header class="bandeau {% block header_class %}{% endblock %}">
+    <!-- Rien de plus ici, tout est géré par le CSS -->
+</header>
+
+<main>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+
+        {% endif %}
+{% block sondages %}
+
+{% endblock %}
+<br>
+{% if request.user.is_authenticated %}
+{{request.user.username}} <br>
+
+<br>
+
+<form action="{% url 'polls:deconnection' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Se déconnecter</button>
+</form>
+
+{% else %}
+{% if "/connection/" not in request.path %}
+<a href="{% url 'polls:connection' %}">se connecter</a>
+
+{% endif %}
+
+{% endif %}
+</main>
+
+</body>
+</html>
