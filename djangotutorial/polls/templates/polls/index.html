@@ -1,4 +1,6 @@
-{% load static %}
+{% extends "polls/base.html" %}
+
+<!--{% load static %}
 
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
@@ -12,4 +14,31 @@
     <p>No polls are available.</p>
 {% endif %}
 
-<a href="{% url 'polls:add' %}">Add a question</a>
+
+<a href="{% url 'polls:add' %}">Add a question</a>-->
+
+
+{% block titre %}
+
+page d'accueil
+{% endblock %}
+
+
+{% block sondages %}
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}  {{ question.pub_date }} {{question.author.username}}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+
+<br><br><br><br><br><br>
+
+
+<br><br><br><br><br>
+<a href="{% url 'polls:all' %}">Voir tous les sondages</a>
+{% endblock %}
